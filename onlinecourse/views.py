@@ -111,14 +111,14 @@ def enroll(request, course_id):
          # Add each selected choice object to the submission object
          # Redirect to show_exam_result with the submission id
 def submit(request, course_id):
-    context = {}
+    # context = {}
     course = get_object_or_404(Course, pk=course_id)
     user = request.user
     enroll = Enrollment.objects.get(user=user, course=course)
-    sub  = Submission.objects.create(enrollment=enroll)
+    sub = Submission.objects.create(enrollment=enroll)
     sub.chocies.set(extract_answers(request))
 
-    return render(request, 'onlinecourse/submission.html', context)
+    # return render(request, 'onlinecourse/submission.html', context)
     return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course.id,)))
 
 
@@ -129,7 +129,6 @@ def extract_answers(request):
        if key.startswith('choice'):
            value = request.POST[key]
            choice_id = int(value)
-           # choice_Instance = get(choice_id)
            submitted_anwsers.append(choice_id)
    return submitted_anwsers
 
@@ -141,6 +140,13 @@ def extract_answers(request):
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
 def show_exam_result(request, course_id, submission_id):
-    
+    context = {}
+    course = get_object_or_404(Course, pk=course_id)
+    # submission = Submission.objects.get(submission_id = submission_id)
+    submission = get_object_or_404(Submission, pk=submission_id)
+    selected_ids = submission.chocies.all()
 
-
+    for i in selected_ids:
+        if i.is_correct:
+            
+    return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
